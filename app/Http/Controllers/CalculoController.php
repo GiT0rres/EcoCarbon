@@ -25,6 +25,32 @@ public function resultados()
 {
     return view('dashboard.resultados');
 }
+
+public function relatorios()
+{
+   return view('dashboard.relatorios');
+}
+
+public function historicoEmissoes()
+{
+    return view('dashboard.historico-emissoes');
+}
+
+public function metodologia()
+{
+    return view('dashboard.metodologia');
+}
+
+public function login()
+{
+    return view('auth.login');
+}
+
+public function cadastro()
+{
+    return view('auth.cadastro');
+}
+
 public function store(Request $request)
 {
     Calculo::create([

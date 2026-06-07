@@ -20,6 +20,462 @@
     <!-- Chart.js para donut e line chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
+    <style>
+        /* ── TOP ROW: hero + gauge + summary ── */
+        .results-top-row {
+            display: grid;
+            grid-template-columns: 1fr 260px 290px;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: stretch;
+        }
+
+        /* ── HERO ── */
+        .result-hero {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #388e3c 100%);
+            border-radius: 14px;
+            padding: 28px 32px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .result-hero::before {
+            content: '';
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,.06);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .result-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -70px; right: 60px;
+            width: 160px; height: 160px;
+            background: rgba(255,255,255,.04);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            opacity: .8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .hero-value {
+            font-size: 62px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+        .hero-unit {
+            font-size: 17px;
+            font-weight: 500;
+            opacity: .85;
+            margin-top: 4px;
+        }
+        .hero-equiv {
+            display: flex;
+            gap: 28px;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,.2);
+        }
+        .equiv-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .equiv-icon {
+            width: 38px; height: 38px;
+            background: rgba(255,255,255,.12);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .equiv-text strong { display: block; font-size: 16px; font-weight: 700; }
+        .equiv-text span   { font-size: 11.5px; opacity: .75; line-height: 1.3; }
+
+        /* ── GAUGE CARD ── */
+        .gauge-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 24px 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0;
+        }
+        .gauge-card-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .gauge-card-title i { font-size: 13px; color: #9ca3af; cursor: help; }
+
+        /* Gauge: arco CSS puro usando border-radius + overflow */
+        .gauge-arc-wrap {
+            position: relative;
+            width: 180px;
+            height: 92px; /* metade do círculo */
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .gauge-arc-bg {
+            position: absolute;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #22c55e 0deg 60deg,
+                #fbbf24 60deg 120deg,
+                #f97316 120deg 180deg,
+                transparent 180deg 360deg
+            );
+            top: 0; left: 0;
+        }
+        .gauge-arc-inner {
+            position: absolute;
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: white;
+            top: 35px; left: 35px;
+        }
+        /* Agulha — rotate varia conforme nível: baixo=-80deg, moderado=-10deg, alto=60deg */
+        .gauge-needle-wrap {
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+        }
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-10deg); /* moderado */
+            width: 3px;
+            height: 72px;
+            background: #1f2937;
+            border-radius: 3px 3px 0 0;
+        }
+        .gauge-dot {
+            position: absolute;
+            bottom: -7px; left: 50%;
+            transform: translateX(-50%);
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: #1f2937;
+        }
+        .gauge-leaf-icon {
+            position: absolute;
+            bottom: 18px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            color: white;
+        }
+        .gauge-level {
+            font-size: 20px;
+            font-weight: 800;
+            color: #d97706;
+            margin-bottom: 4px;
+        }
+        .gauge-sublabel {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+        /* ticks de escala embaixo do arco */
+        .gauge-ticks {
+            display: flex;
+            justify-content: space-between;
+            width: 180px;
+            margin-top: 6px;
+        }
+        .gauge-ticks span {
+            font-size: 10px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* ── SUMMARY CARD ── */
+        .summary-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 24px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+        }
+        .summary-card-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid #f9fafb;
+            gap: 8px;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row-label { font-size: 12.5px; color: #6b7280; flex: 1; }
+        .summary-row-value {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #111827;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .summary-row-value .unit { font-size: 11px; font-weight: 400; color: #9ca3af; }
+        .summary-row-value.green { color: #2e7d32; font-size: 15px; }
+        .badge-ok {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 700;
+            background: #f0fdf4; color: #16a34a;
+            padding: 3px 8px; border-radius: 20px;
+            margin-top: 4px;
+        }
+
+        /* ── CHARTS ROW ── */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 24px 28px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+        }
+        .chart-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .chart-card-header h3 {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #374151;
+        }
+        .chart-filter {
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12.5px;
+            font-family: inherit;
+            color: #374151;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .chart-tip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+            font-size: 11.5px;
+            color: #9ca3af;
+        }
+        .chart-tip i { color: #2e7d32; font-size: 13px; flex-shrink: 0; }
+
+        /* Donut layout */
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .donut-canvas-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 150px; height: 150px;
+        }
+        .donut-canvas-wrap canvas { width: 150px !important; height: 150px !important; }
+        .donut-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+        }
+        .donut-center strong { display: block; font-size: 17px; font-weight: 800; color: #111827; }
+        .donut-center span   { font-size: 10px; color: #9ca3af; }
+        .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .legend-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 5px 8px; border-radius: 8px; cursor: pointer;
+            transition: background .15s;
+        }
+        .legend-item:hover { background: #f9fafb; }
+        .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .legend-icon { font-size: 14px; width: 18px; text-align: center; }
+        .legend-name { font-size: 12.5px; color: #374151; font-weight: 500; flex: 1; }
+        .legend-val  { font-size: 12.5px; font-weight: 700; color: #111827; }
+        .legend-pct  { font-size: 11px; color: #9ca3af; }
+
+        /* Line chart canvas */
+        .line-canvas-wrap { position: relative; height: 170px; }
+        .line-canvas-wrap canvas { width: 100% !important; }
+
+        /* ── RECOMENDAÇÕES + PRÓXIMOS PASSOS ── */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1fr 290px;
+            gap: 16px;
+            margin-bottom: 80px;
+        }
+        .rec-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 24px 28px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+        }
+        .rec-card-header {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .rec-card-header h3 { font-size: 14px; font-weight: 700; color: #111827; }
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .rec-item {
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .rec-item:hover { border-color: #86efac; box-shadow: 0 2px 8px rgba(46,125,50,.08); }
+        .rec-item-top { display: flex; align-items: center; gap: 10px; }
+        .rec-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: #f0fdf4;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px; color: #2e7d32; flex-shrink: 0;
+        }
+        .rec-item h4 { font-size: 13px; font-weight: 700; color: #111827; }
+        .rec-item p  { font-size: 12px; color: #6b7280; line-height: 1.45; margin: 0; }
+        .impact-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 8px; border-radius: 20px; width: fit-content;
+        }
+        .impact-badge.alto  { background: #fef2f2; color: #dc2626; }
+        .impact-badge.medio { background: #fffbeb; color: #d97706; }
+
+        /* Próximos passos */
+        .steps-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 24px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.04);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .steps-card h3 {
+            font-size: 14px; font-weight: 700; color: #111827;
+            margin-bottom: 6px; padding-bottom: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .step-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px;
+            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            text-decoration: none;
+            color: #374151; font-size: 13.5px; font-weight: 600;
+            transition: border-color .15s, background .15s;
+        }
+        .step-link:hover { border-color: #86efac; background: #f0fdf4; color: #2e7d32; }
+        .step-link i { font-size: 16px; color: #2e7d32; }
+        .btn-home {
+            background: #2e7d32; color: white;
+            border: none; padding: 14px 20px;
+            border-radius: 10px; cursor: pointer;
+            font-size: 14px; font-weight: 600; font-family: inherit;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-decoration: none; margin-top: 4px;
+            transition: background .15s;
+        }
+        .btn-home:hover { background: #1b5e20; color: white; }
+
+        /* ── PAGE HEADER ── */
+        .results-page-header {
+            display: flex; align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .page-meta {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+        }
+        .page-meta span { font-size: 13px; color: #6b7280; }
+        .company-badge {
+            background: #e8f5e9; color: #2e7d32;
+            font-size: 12px; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px;
+        }
+        .btn-detail {
+            display: flex; align-items: center; gap: 6px;
+            border: 1.5px solid #d1d5db; color: #374151; background: white;
+            padding: 9px 18px; border-radius: 10px;
+            font-size: 13px; font-weight: 600; font-family: inherit;
+            cursor: pointer; text-decoration: none;
+            transition: border-color .15s, background .15s;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .btn-detail:hover { border-color: #2e7d32; background: #f0fdf4; color: #2e7d32; }
+
+        /* ── topbar: botão relatório ── */
+        .btn-report {
+            display: flex; align-items: center; gap: 6px;
+            border: 1.5px solid #e5e7eb; color: #374151; background: white;
+            padding: 7px 16px; border-radius: 8px;
+            font-size: 13.5px; font-weight: 600;
+            text-decoration: none;
+            transition: border-color .15s, background .15s;
+        }
+        .btn-report:hover { border-color: #2e7d32; background: #f0fdf4; color: #2e7d32; }
+
+        /* ── sidebar widget motivacional ── */
+        .sidebar-msg {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+        .sidebar-msg-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+        .sidebar-msg p    { font-size: 13px; color: #374151; font-weight: 700; margin-bottom: 4px; }
+        .sidebar-msg small{ font-size: 12px; color: #6b7280; display: block; }
+    </style>
 </head>
 
 <body>
@@ -374,7 +830,7 @@
                         <i class="fi fi-ts-clipboard"></i>
                         Novo Cálculo
                     </a>
-                    <a href="{{ route('home') }}" class="btn-home">
+                    <a href="{{ url('/') }}" class="btn-home">
                         <i class="fi fi-rr-home"></i>
                         Voltar ao Início
                     </a>
