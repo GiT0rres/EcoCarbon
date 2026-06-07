@@ -52,37 +52,29 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <nav>
-                <a href="#">
+                <a href="{{ route('dashboard') }}">
                     <span class="nav-icon"><i class="fi fi-rr-home"></i></span>
                     Início
                 </a>
-                <a href="#">
+                <a href="{{ route('calculo.novo') }}">
                     <span class="nav-icon"><i class="fi fi-ts-clipboard"></i></span>
                     Novo Cálculo
                 </a>
-                <a href="#">
+                <a href="{{ route('historico.emissoes') }}">
                     <span class="nav-icon"><i class="fi fi-tr-folder-open"></i></span>
                     Meus Cálculos
                 </a>
-                <a class="active" href="#">
+                <a class="active" href="{{ route('relatorios') }}">
                     <span class="nav-icon"><i class="fi fi-tr-file-spreadsheet"></i></span>
                     Relatórios
                 </a>
-                <a href="#">
-                    <span class="nav-icon"><i class="fi fi-rr-time-past"></i></span>
-                    Histórico de Emissões
-                </a>
-                <a href="#">
+                <a href="{{ route('metodologia') }}">
                     <span class="nav-icon"><i class="fi fi-ts-book-open-cover"></i></span>
                     Metodologia
                 </a>
-                <a href="#">
-                    <span class="nav-icon"><i class="fi fi-tr-carbon-cloud"></i></span>
-                    Fatores de Emissão
-                </a>
-                <a href="#">
-                    <span class="nav-icon"><i class="fi fi-rr-interrogation"></i></span>
-                    Dúvidas Frequentes
+                <a href="{{ route('calculo.revisao') }}">
+                    <span class="nav-icon"><i class="fi fi-ts-book-open-cover"></i></span>
+                    Revisão
                 </a>
             </nav>
 

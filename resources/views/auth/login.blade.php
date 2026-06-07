@@ -118,7 +118,7 @@
                 <div class="auth-card-title">Entrar na Conta</div>
                 <div class="auth-card-sub">Bem-vindo de volta! Informe seus dados para acessar a plataforma.</div>
 
-                <form action="{{ route('login') }}" method="POST">
+                <form action="{{ route('login.post') }}" method="POST">
                     @csrf
 
                     <div class="auth-field">

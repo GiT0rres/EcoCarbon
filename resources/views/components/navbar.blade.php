@@ -26,27 +26,30 @@
             <ul class="navbar-nav mx-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link active-nav" href="#">Início</a>
+                    <a class="nav-link active-nav" href="{{ route('dashboard') }}">Início</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sobre</a>
+                    <a class="nav-link" href="{{ route('historico.emissoes') }}">Historico</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Como Funciona</a>
+                    <a class="nav-link" href="{{ route('metodologia') }}">Metodologia </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Metodologia</a>
+                    <a class="nav-link" href="{{ route('calculo.novo') }}">Calcular</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Relatórios</a>
+                    <a class="nav-link" href="{{ route('relatorios') }}">Relatórios</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Contato</a>
+                    <a class="nav-link" href="{{ route('calculo.resultados') }}">resultados</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('calculo.revisao') }}">revisao</a>
                 </li>
 
             </ul>
@@ -54,14 +57,17 @@
             <!-- Botões -->
             <div class="navbar-actions">
 
-                <a href="#" class="btn-login">
+                <a href="login" class="btn-login">
                     Entrar
                 </a>
 
-                <a href="#" class="btn-cadastro">
+                <a href="cadastro" class="btn-cadastro">
                     Cadastrar
                 </a>
-
+                <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="btn-logout" >Logout</button>
+            </form>
             </div>
 
         </div>

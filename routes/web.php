@@ -1,54 +1,84 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalculoController;
+
+// ── PÁGINAS PÚBLICAS ────────────────────────────────────────────────
 
 Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/relatorios', function () {
-    return view('relatorios');
-})->name('relatorios');
+// ── AUTENTICAÇÃO ────────────────────────────────────────────────────
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
 
-Route::get('/cadastro', function () {
-    return view('auth.cadastro');
-})->name('cadastro');
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.post');
 
-Route::get('/esqueci-senha', function () {
-    return 'Página em construção';
-})->name('password.request');
+    Route::get('/cadastro', [AuthController::class, 'showCadastro'])
+        ->name('cadastro');
 
-use App\Http\Controllers\CalculoController;
+    Route::post('/cadastro', [AuthController::class, 'cadastro'])
+        ->name('cadastro.post');
+});
 
-Route::get('/calculos/novo', [CalculoController::class, 'create'])
-    ->name('calculo.novo');
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
 
-  Route::get('/calculos/fontes-emissao', [CalculoController::class, 'fontesEmissao'])
-    ->name('calculo.fontes');
+Route::get('/esqueci-senha', fn() => 'Página em construção')
+    ->name('password.request');
 
+// ── ÁREA AUTENTICADA ────────────────────────────────────────────────
+
+Route::middleware('auth')->group(function () {
+
+    // Dashboard / Início
+    Route::get('/dashboard', function () {
+        return view('home');
+    })->name('dashboard');
+
+    // ── Fluxo de cálculo ─────────────────────────────────────────
+
+    // Etapa 1: Dados da empresa (GET exibe / POST salva)
+    // Etapa 1
+    Route::get('/calculos/novo', [CalculoController::class, 'create'])
+        ->name('calculo.novo');
+
+    Route::post('/calculos/novo', [CalculoController::class, 'store'])
+        ->name('calculo.novo.post');
+
+    // Etapa 2
+    Route::get('/calculos/fontes-emissao', [CalculoController::class, 'fontesEmissao'])
+        ->name('calculo.fontes');
+
+    // Etapa 3
     Route::get('/calculos/revisao', [CalculoController::class, 'revisao'])
-    ->name('calculo.revisao');
+        ->name('calculo.revisao');
 
+  Route::post('/calculos/fontes-emissao', [CalculoController::class, 'storeFontes'])
+    ->name('calculo.fontes.post');
 
-Route::get('/resultados', [CalculoController::class, 'resultados'])
-    ->name('calculo.resultados');
+    Route::post('/calculos/revisao', function () {
+    return redirect()->route('calculo.resultados');
+})->name('calculo.revisao.post');
 
-Route::get('/relatorios', [CalculoController::class, 'relatorios'])
-    ->name('relatorios');
+    // Etapa 4
+    Route::get('/calculos/resultados/{id?}', [CalculoController::class, 'resultados'])
+        ->name('calculo.resultados');
 
+    // ── Páginas de apoio ─────────────────────────────────────────
 
-Route::get('/historico-emissoes', [CalculoController::class, 'historicoEmissoes'])
-    ->name('historico.emissoes');
+    Route::get('/relatorios', [CalculoController::class, 'relatorios'])
+        ->name('relatorios');
 
-Route::get('/metodologia', [CalculoController::class, 'metodologia'])
-    ->name('metodologia');
+    Route::get('/historico-emissoes', [CalculoController::class, 'historicoEmissoes'])
+        ->name('historico.emissoes');
 
-    Route::get('/login', [CalculoController::class, 'login'])
-    ->name('login');
-
-Route::get('/cadastro', [CalculoController::class, 'cadastro'])
-    ->name('cadastro');
+    Route::get('/metodologia', [CalculoController::class, 'metodologia'])
+        ->name('metodologia');
+});
