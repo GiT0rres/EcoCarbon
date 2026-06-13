@@ -81,4 +81,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/metodologia', [CalculoController::class, 'metodologia'])
         ->name('metodologia');
+    
+});
+
+
+Route::fallback(function () {
+    return redirect('/');
 });
