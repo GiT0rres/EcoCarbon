@@ -1,3 +1,215 @@
+# 🌱 EcoCarbon
+
+Sistema web desenvolvido para auxiliar empresas no cálculo, monitoramento e gestão de emissões de gases de efeito estufa (GEE), promovendo práticas sustentáveis e apoiando estratégias ESG.
+
+---
+
+## 📖 Sobre o Projeto
+
+O **EcoCarbon** é uma plataforma corporativa que permite que empresas realizem o cálculo da sua pegada de carbono de forma simples, organizada e intuitiva.
+
+A aplicação foi desenvolvida com foco em sustentabilidade, conformidade ambiental e gestão estratégica, permitindo que organizações acompanhem suas emissões e identifiquem oportunidades de melhoria.
+
+---
+
+## 🚀 Funcionalidades
+
+### 👤 Autenticação de Usuários
+
+* Cadastro de empresas
+* Login e logout
+* Controle de acesso com autenticação Laravel
+* Recuperação de senha (estrutura preparada)
+
+### 🏢 Cadastro Empresarial
+
+* Nome da empresa
+* CNPJ
+* Setor de atuação
+* Quantidade de funcionários
+* Cidade e estado
+* Dados do responsável
+
+### ♻️ Cálculo da Pegada de Carbono
+
+Fluxo dividido em etapas:
+
+1. Dados da empresa
+2. Fontes de emissão
+3. Revisão das informações
+4. Resultado do cálculo
+
+### 📊 Relatórios
+
+* Visualização dos resultados
+* Acompanhamento dos indicadores ambientais
+* Histórico de emissões
+
+### 🌍 ESG e Sustentabilidade
+
+A plataforma auxilia empresas a:
+
+* Reduzir impactos ambientais
+* Melhorar indicadores ESG
+* Atender exigências ambientais
+* Fortalecer sua reputação corporativa
+* Tomar decisões baseadas em dados
+
+---
+
+## 🛠 Tecnologias Utilizadas
+
+### Backend
+
+* Laravel 12
+* PHP 8+
+* Eloquent ORM
+* Middleware de autenticação
+
+### Frontend
+
+* Blade Templates
+* HTML5
+* CSS3
+* Bootstrap 5
+* JavaScript
+
+### Banco de Dados
+
+* SQLite (ambiente de desenvolvimento)
+* Compatível com MySQL e PostgreSQL
+
+---
+
+## 📂 Estrutura do Projeto
+
+```bash
+resources/
+├── views/
+│   ├── auth/
+│   │   ├── login.blade.php
+│   │   └── cadastro.blade.php
+│   │
+│   ├── components/
+│   │   ├── navbar.blade.php
+│   │   ├── hero.blade.php
+│   │   └── benefits.blade.php
+│   │
+│   ├── dashboard/
+│   └── home.blade.php
+│
+routes/
+└── web.php
+
+app/
+├── Http/
+│   └── Controllers/
+│       ├── AuthController.php
+│       └── CalculoController.php
+│
+database/
+└── migrations/
+```
+
+---
+
+## ⚙️ Instalação
+
+### Clonar o repositório
+
+```bash
+git clone https://github.com/seu-usuario/ecocarbon.git
+```
+
+### Entrar na pasta
+
+```bash
+cd ecocarbon
+```
+
+### Instalar dependências
+
+```bash
+composer install
+```
+
+### Configurar ambiente
+
+```bash
+cp .env.example .env
+```
+
+### Gerar chave da aplicação
+
+```bash
+php artisan key:generate
+```
+
+### Executar migrations
+
+```bash
+php artisan migrate
+```
+
+### Iniciar servidor
+
+```bash
+php artisan serve
+```
+
+A aplicação estará disponível em:
+
+```bash
+http://127.0.0.1:8000
+```
+
+---
+
+## 📸 Principais Telas
+
+* Página Inicial
+* Cadastro Empresarial
+* Login
+* Dashboard
+* Cadastro de Emissões
+* Revisão dos Dados
+* Relatórios
+* Histórico de Emissões
+
+---
+
+## 🎯 Objetivo Acadêmico
+
+Este projeto foi desenvolvido como atividade acadêmica com o objetivo de aplicar conceitos de:
+
+* Desenvolvimento Web
+* Laravel Framework
+* Banco de Dados
+* Engenharia de Software
+* Sustentabilidade Corporativa
+* ESG (Environmental, Social and Governance)
+
+---
+
+## 👨‍💻 Equipe
+
+Projeto desenvolvido para fins educacionais e acadêmicos.
+
+---
+
+## 📄 Licença
+
+Este projeto possui finalidade acadêmica e educacional.
+Todos os direitos reservados aos autores do projeto.
+
+---
+
+### 🌱 EcoCarbon
+
+"Transformando dados ambientais em decisões sustentáveis."
+
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
